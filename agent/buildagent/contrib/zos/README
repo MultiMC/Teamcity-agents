@@ -1,0 +1,23 @@
+This directory contains examples of agent startup scripts for z/OS.
+The scripts are provided by Teradata (http://www.teradata.com/).
+
+These scripts should be placed into the agent installation directory (not
+under "bin" folder, because its content is removed during agent upgrade).
+
+The scripts are exemplary and thus may require additional tuning to work in
+specific environment.
+
+* start.sh - this script must be used to start agent, instead of default agent.sh script
+* restart.sh - this script is used to restart agent after the upgrade
+
+Note that initially, before starting the agent, scripts in the "bin" directory
+must be converted to IBM-1047 encoding.
+                       
+Both scripts set _BPX_SHAREAS environment variable to NO. This is
+required for the agent upgrade procedure to work properly.
+
+Also scripts set TEAMCITY_AGENT_START_CMD environment variable. This is
+required, because under z/OS agent default shell scripts must be in
+IBM-1047 encoding. The command specified in TEAMCITY_AGENT_START_CMD
+variable will be invoked right after the upgrade of the agent files. The
+purpose of this command is to prepare shell scripts and start the agent.

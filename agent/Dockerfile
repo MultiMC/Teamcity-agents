@@ -1,0 +1,51 @@
+# MultiMC 64-bit Linux Build Environment
+
+# Add teamcity parts to an ancient base of Ubuntu 14.04
+FROM ubuntu:trusty
+MAINTAINER Petr Mrázek, peterix@gmail.com
+
+VOLUME /data/teamcity_agent/conf
+ENV LANG en_US.UTF-8
+ENV CONFIG_FILE /data/teamcity_agent/conf/buildAgent.properties
+
+COPY run-agent.sh /run-agent.sh
+COPY run-services.sh /run-services.sh
+COPY buildagent /opt/buildagent
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends sudo && \
+    useradd -m buildagent && \
+    chmod +x /opt/buildagent/bin/*.sh && \
+    chmod +x /run-agent.sh /run-services.sh && \
+    mv /opt/buildagent/conf /opt/buildagent/conf_dist && \
+    sync
+
+CMD ["/run-services.sh"]
+
+EXPOSE 9090
+
+# We need "apt-add-repository"
+RUN apt-get update
+RUN apt-get install -y software-properties-common python-software-properties curl
+
+# Install Qt
+RUN apt-add-repository -y ppa:beineri/opt-qt542-trusty
+RUN apt-get update
+RUN apt-get install -y qt54base qt54svg qt54tools qt54x11extras
+
+# Install Other Dependencies
+RUN apt-get install -y zlib1g-dev
+
+# Install Build Tools
+RUN apt-add-repository -y ppa:ubuntu-toolchain-r/test
+RUN apt-get update
+RUN apt-get install -y g++-5 git build-essential
+RUN apt-get install wget
+RUN wget --no-check-certificate https://cmake.org/files/v3.10/cmake-3.10.0-Linux-x86_64.sh
+RUN sh cmake-3.10.0-Linux-x86_64.sh --skip-license --prefix=/
+
+# Install Java
+RUN apt-get install -y openjdk-7-jdk
+
+# Install extra packages
+RUN apt-get install -y mesa-common-dev libglu1-mesa-dev libgtk2.0-dev vim
