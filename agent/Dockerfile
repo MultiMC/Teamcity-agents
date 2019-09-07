@@ -12,20 +12,14 @@ COPY run-agent.sh /run-agent.sh
 COPY run-services.sh /run-services.sh
 COPY buildagent /opt/buildagent
 
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends sudo && \
-    useradd -m buildagent && \
-    chmod +x /opt/buildagent/bin/*.sh && \
-    chmod +x /run-agent.sh /run-services.sh && \
-    mv /opt/buildagent/conf /opt/buildagent/conf_dist && \
-    sync
-
-CMD ["/run-services.sh"]
-
-EXPOSE 9090
+RUN apt-get update
+RUN apt-get install -y --no-install-recommends sudo
+RUN useradd -m buildagent
+RUN chmod +x /opt/buildagent/bin/*.sh
+RUN chmod +x /run-agent.sh /run-services.sh
+RUN mv /opt/buildagent/conf /opt/buildagent/conf_dist && sync
 
 # We need "apt-add-repository"
-RUN apt-get update
 RUN apt-get install -y software-properties-common python-software-properties curl
 
 # Install Qt
@@ -45,7 +39,13 @@ RUN wget --no-check-certificate https://cmake.org/files/v3.10/cmake-3.10.0-Linux
 RUN sh cmake-3.10.0-Linux-x86_64.sh --skip-license --prefix=/
 
 # Install Java
-RUN apt-get install -y openjdk-7-jdk
+RUN add-apt-repository ppa:openjdk-r/ppa
+RUN apt-get update
+RUN apt-get install -y openjdk-8-jdk
 
 # Install extra packages
 RUN apt-get install -y mesa-common-dev libglu1-mesa-dev libgtk2.0-dev vim
+
+CMD ["/run-services.sh"]
+
+EXPOSE 9090

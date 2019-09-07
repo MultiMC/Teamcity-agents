@@ -3,5 +3,6 @@ services:
   agent-x64:
     build: agent
     environment:
-     - SERVER_URL=https://teamcity.multimc.org
+     - SERVER_URL=http://teamcity.multimc.org
      - AGENT_NAME=Trusty64
+    hostname: trusty-64
