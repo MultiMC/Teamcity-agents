@@ -7,6 +7,8 @@ services:
     environment:
      - "SERVER_URL=http://server:8111"
      - AGENT_NAME=Trusty64
+     - AGENT_TOKEN=${TOKEN_TRUSTY64}
+     - RUN_AS_BUILDAGENT=true
     hostname: trusty-64
     networks:
      - teamcity_internal
@@ -17,7 +19,21 @@ services:
     environment:
      - "SERVER_URL=http://server:8111"
      - AGENT_NAME=Trusty32
+     - AGENT_TOKEN=${TOKEN_TRUSTY32}
+     - RUN_AS_BUILDAGENT=true
     hostname: trusty-32
+    networks:
+     - teamcity_internal
+  site:
+    build:
+      context: agents
+      dockerfile: Dockerfile.site
+    environment:
+     - "SERVER_URL=http://server:8111"
+     - AGENT_NAME=Site
+     - AGENT_TOKEN=${TOKEN_SITE}
+     - RUN_AS_BUILDAGENT=true
+    hostname: site
     networks:
      - teamcity_internal
 

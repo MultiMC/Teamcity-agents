@@ -1,0 +1,39 @@
+# MultiMC 64-bit Linux Build Environment
+
+# Add teamcity parts to an ancient base of Ubuntu 14.04
+FROM ubuntu:trusty
+MAINTAINER Petr Mrázek, peterix@gmail.com
+
+VOLUME /data/teamcity_agent/conf
+ENV LANG en_US.UTF-8
+ENV CONFIG_FILE /data/teamcity_agent/conf/buildAgent.properties
+
+COPY run-agent.sh /run-agent.sh
+COPY run-services.sh /run-services.sh
+COPY buildagent /opt/buildagent
+
+RUN apt-get update
+RUN apt-get install -y --no-install-recommends sudo
+RUN useradd -m buildagent
+RUN chmod +x /opt/buildagent/bin/*.sh
+RUN chmod +x /run-agent.sh /run-services.sh
+RUN mv /opt/buildagent/conf /opt/buildagent/conf_dist && sync
+
+# We need "apt-add-repository"
+RUN apt-get install -y software-properties-common python-software-properties curl
+
+# Install Java
+RUN add-apt-repository ppa:openjdk-r/ppa
+RUN apt-get update
+RUN apt-get install -y openjdk-8-jdk
+
+CMD ["/run-services.sh"]
+
+EXPOSE 9090
+
+# Download and install hugo
+ENV HUGO_VERSION 0.31.1
+ENV HUGO_BINARY hugo_${HUGO_VERSION}_Linux-64bit.deb
+ADD https://github.com/spf13/hugo/releases/download/v${HUGO_VERSION}/${HUGO_BINARY} /tmp/hugo.deb
+RUN dpkg -i /tmp/hugo.deb && rm /tmp/hugo.deb
+
