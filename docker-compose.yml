@@ -1,8 +1,27 @@
 version: '3'
 services:
   agent-x64:
-    build: agent
+    build:
+      context: agents
+      dockerfile: Dockerfile.trusty64
     environment:
-     - SERVER_URL=http://teamcity.multimc.org
+     - "SERVER_URL=http://server:8111"
      - AGENT_NAME=Trusty64
     hostname: trusty-64
+    networks:
+     - teamcity_internal
+  agent-x32:
+    build:
+      context: agents
+      dockerfile: Dockerfile.trusty32
+    environment:
+     - "SERVER_URL=http://server:8111"
+     - AGENT_NAME=Trusty32
+    hostname: trusty-32
+    networks:
+     - teamcity_internal
+
+networks:
+  teamcity_internal:
+    external: true
+
