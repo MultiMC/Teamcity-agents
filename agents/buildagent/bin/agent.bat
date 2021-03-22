@@ -69,10 +69,10 @@ call :dirname "%java_bin_dir%" java_hint
 set "java_bin_dir="
 
 :findJava
-set "FJ_MIN_UNSUPPORTED_JAVA_VERSION=11"
+set "FJ_MIN_UNSUPPORTED_JAVA_VERSION=12"
 :: First search only among specified directories
 set "FJ_SKIP_ALL_EXCEPT_ARGS=1"
-CALL "%cd%\findJava.bat" "1.6" "%TEAMCITY_JRE%" "%java_hint%" "%cd%\..\jre" "%cd%\..\..\jre" 1>nul 2>nul
+CALL "%cd%\findJava.bat" "1.8" "%TEAMCITY_JRE%" "%java_hint%" "%cd%\..\jre" "%cd%\..\..\jre" 1>nul 2>nul
 set "FJ_SKIP_ALL_EXCEPT_ARGS="
 IF ERRORLEVEL 0 GOTO java_search_done
 
@@ -82,7 +82,7 @@ CALL "%cd%\findJava.bat" "1.8" 1>nul 2>nul
 set "FJ_LOOK_FOR_X86_JAVA="
 IF ERRORLEVEL 0 GOTO java_search_done
 :: Then in all other possible locations for any bitness
-CALL "%cd%\findJava.bat" "1.5" "%TEAMCITY_JRE%" "%java_hint%" "%cd%\..\jre" "%cd%\..\..\jre"
+CALL "%cd%\findJava.bat" "1.8" "%TEAMCITY_JRE%" "%java_hint%" "%cd%\..\jre" "%cd%\..\..\jre"
 IF ERRORLEVEL 0 GOTO java_search_done
 IF NOT "%QUIET%"=="1" ECHO Java not found. Cannot start TeamCity agent. Please ensure JDK or JRE is installed and JAVA_HOME environment variable points to it.
 GOTO done
@@ -134,7 +134,12 @@ move ..\lib\latest\launcher.jar ..\lib\launcher.jar
 :start_run
 "%TEAMCITY_AGENT_JAVA_EXEC%" %TEAMCITY_LAUNCHER_OPTS_ACTUAL% -cp %TEAMCITY_LAUNCHER_CLASSPATH% jetbrains.buildServer.agent.Check %TEAMCITY_AGENT_OPTS_ACTUAL% jetbrains.buildServer.agent.AgentMain -file %TEAMCITY_AGENT_CONFIG_FILE%
 IF ERRORLEVEL 1 goto done
-start "TeamCity Build Agent" "%TEAMCITY_AGENT_JAVA_EXEC%" %TEAMCITY_LAUNCHER_OPTS_ACTUAL% -cp %TEAMCITY_LAUNCHER_CLASSPATH% jetbrains.buildServer.agent.Launcher %TEAMCITY_AGENT_OPTS_ACTUAL% jetbrains.buildServer.agent.AgentMain -file %TEAMCITY_AGENT_CONFIG_FILE%
+
+IF not "%TEAMCITY_AGENT_START_EXEC%" == "" goto start_cmd
+SET TEAMCITY_AGENT_START_EXEC=start /min
+
+:start_cmd
+%TEAMCITY_AGENT_START_EXEC% "TeamCity Build Agent" "%TEAMCITY_AGENT_JAVA_EXEC%" %TEAMCITY_LAUNCHER_OPTS_ACTUAL% -cp %TEAMCITY_LAUNCHER_CLASSPATH% jetbrains.buildServer.agent.Launcher %TEAMCITY_AGENT_OPTS_ACTUAL% jetbrains.buildServer.agent.AgentMain -file %TEAMCITY_AGENT_CONFIG_FILE%
 goto done
 
 :stop

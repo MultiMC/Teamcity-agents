@@ -113,6 +113,11 @@ You might also need to increase the number of files to store to prevent logs fro
     <appender-ref ref="ROLL"/>
   </category>
 
+  <category name="org.springframework">
+    <priority value="ERROR"/>
+    <appender-ref ref="ROLL"/>
+  </category>
+
   <category name="jetbrains.buildServer.AGENT.registration">
     <appender-ref ref="CONSOLE-INFO"/>
   </category>

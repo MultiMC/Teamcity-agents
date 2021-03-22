@@ -150,17 +150,17 @@ need_java() {
     fi
 
     . ./findJava.sh
-    FJ_MIN_UNSUPPORTED_JAVA_VERSION=11
+    FJ_MIN_UNSUPPORTED_JAVA_VERSION=12
     FJ_SKIP_ALL_EXCEPT_ARGS=1
     # First search only among specified directories
-    find_java 1.6 "$TEAMCITY_JRE" "$java_hint" "`pwd`/../jre" "`pwd`/../../jre" >/dev/null 2>&1
+    find_java 1.8 "$TEAMCITY_JRE" "$java_hint" "`pwd`/../jre" "`pwd`/../../jre" >/dev/null 2>&1
     unset FJ_SKIP_ALL_EXCEPT_ARGS
     FJ_LOOK_FOR_X86_JAVA=1
     # Then in all other possible locations for 32bit java 1.8+, arguments are required there as it's covered in previous attempt
     find_java 1.8 >/dev/null 2>&1
     unset FJ_LOOK_FOR_X86_JAVA
     # Then in all other possible locations for any bitness
-    find_java 1.5 "$TEAMCITY_JRE" "$java_hint" "`pwd`/../jre" "`pwd`/../../jre";
+    find_java 1.8 "$TEAMCITY_JRE" "$java_hint" "`pwd`/../jre" "`pwd`/../../jre";
     if [ $? -ne 0 ]; then
         if [ "$QUIET" -eq 0 ]; then
           echo "Java not found. $1 Please ensure JDK or JRE is installed and JAVA_HOME environment variable points to it."
@@ -218,7 +218,10 @@ start|run)
         fi
 
         if [ "$command_name" = "start" ]; then
-          nohup "$java_exec" $TEAMCITY_LAUNCHER_OPTS_ACTUAL -cp $TEAMCITY_LAUNCHER_CLASSPATH jetbrains.buildServer.agent.Launcher $TEAMCITY_AGENT_OPTS_ACTUAL jetbrains.buildServer.agent.AgentMain -file $CONFIG_FILE > "$LOG_DIR/output.log" 2> "$LOG_DIR/error.log" &
+          NOHUP=""
+          nohup id >/dev/null 2>&1 && NOHUP=nohup
+
+          $NOHUP "$java_exec" $TEAMCITY_LAUNCHER_OPTS_ACTUAL -cp $TEAMCITY_LAUNCHER_CLASSPATH jetbrains.buildServer.agent.Launcher $TEAMCITY_AGENT_OPTS_ACTUAL jetbrains.buildServer.agent.AgentMain -file $CONFIG_FILE > "$LOG_DIR/output.log" 2> "$LOG_DIR/error.log" &
           launcher_pid=$!
           echo $launcher_pid > $PID_FILE
 

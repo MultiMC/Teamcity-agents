@@ -12,12 +12,18 @@
 	<false/>
 	<key>KeepAlive</key>
 	<true/>
+    <key>LowPriorityBackgroundIO</key>
+    <false/>
+    <key>LowPriorityIO</key>
+    <false/>
+    <key>ProcessType</key>
+    <string>Interactive</string>
 	<key>ProgramArguments</key>
-	<array> 
-		<string>bash</string>
+	<array>
+		<string>/bin/bash</string>
 		<string>--login</string>
 		<string>-c</string>
-		<string>launcher/bin/TeamCityAgentService-macosx-universal-32 -c ../conf/wrapper.conf</string>
+		<string>bin/agent.sh run</string>
 	</array>
 	<key>RunAtLoad</key>
 	<true/>

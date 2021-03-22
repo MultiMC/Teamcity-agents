@@ -504,6 +504,7 @@ echo - Java executable is not found in the default locations 1>&2
 echo - Java executable is not found in the directories listed in the PATH environment variable 1>&2
 echo. 1>&2
 echo Please make sure either JAVA_HOME or JRE_HOME environment variable is defined and is pointing to the root directory of the valid Java ^(JRE^) installation 1>&2
+if not "!FJ_MIN_UNSUPPORTED_JAVA_VERSION!" == "" echo Please note that all Java versions starting from !FJ_MIN_UNSUPPORTED_JAVA_VERSION! were skipped because stable operation on these Java versions is not guaranteed 1>&2
 if "!FJ_DEBUG!" == "" (
   echo. 1>&2
   echo Environment variable FJ_DEBUG can be set to enable debug output 1>&2

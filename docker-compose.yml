@@ -36,7 +36,21 @@ services:
     hostname: site
     networks:
      - teamcity_internal
-
+  deployer:
+    build:
+      context: agents
+      dockerfile: Dockerfile.deployer
+    environment:
+     - "SERVER_URL=http://server:8111"
+     - AGENT_NAME=Deployer
+     - AGENT_TOKEN=${TOKEN_DEPLOYER}
+    hostname: deployer
+    networks:
+      - teamcity_internal
+    volumes:
+      - /etc/private/deployer:/private
+      - /var/www/files:/deploy/files
+      - /var/www/files2:/deploy/files2
 networks:
   teamcity_internal:
     external: true

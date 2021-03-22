@@ -26,7 +26,7 @@ SET TEAMCITY_JAVA_INSTALL_PATH=%AGENT_INSTALLATION_HOME%\jre
 :: Check there is an installed JRE and break installation if not so
 :checking_java
   ECHO Looking for installed JRE...
-  set FJ_MIN_UNSUPPORTED_JAVA_VERSION=11
+  set FJ_MIN_UNSUPPORTED_JAVA_VERSION=12
   CALL "%cd%\bin\findJava.bat" "1.6" "%TEAMCITY_JAVA_INSTALL_PATH%"
   IF NOT ERRORLEVEL 0 (
     ECHO Warning: No installed JRE found.

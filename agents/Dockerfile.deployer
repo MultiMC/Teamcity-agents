@@ -1,0 +1,43 @@
+# Deployer machine.
+
+FROM ubuntu:latest
+MAINTAINER Petr Mrázek, peterix@gmail.com
+
+VOLUME /data/teamcity_agent/conf
+ENV LANG en_US.UTF-8
+ARG DEBIAN_FRONTEND=noninteractive
+ENV CONFIG_FILE /data/teamcity_agent/conf/buildAgent.properties
+
+COPY run-agent.sh /run-agent.sh
+COPY run-services.sh /run-services.sh
+COPY buildagent /opt/buildagent
+
+RUN apt-get update && apt-get install -y --no-install-recommends sudo
+RUN useradd -m buildagent
+RUN chmod +x /opt/buildagent/bin/*.sh
+RUN chmod +x /run-agent.sh /run-services.sh
+RUN mv /opt/buildagent/conf /opt/buildagent/conf_dist && sync
+CMD ["/run-services.sh"]
+
+# We need "apt-add-repository"
+RUN apt-get install -y software-properties-common curl
+
+# Install Java
+RUN add-apt-repository ppa:openjdk-r/ppa
+RUN apt-get update
+RUN apt-get install -y openjdk-8-jre-headless
+
+EXPOSE 9090
+
+RUN apt-get update && apt-get install -y python3 python3-pip python3-requests git wget zip unzip s3cmd rsync
+RUN pip3 install 'git+https://github.com/MultiMC/repoman2.git'
+
+# add patron scraper script so it can be used by schedulers
+RUN pip3 install 'patreon<0.4.0'
+WORKDIR /usr/bin
+RUN wget https://raw.githubusercontent.com/MultiMC/patronupdater/master/patronupdater.py
+RUN chmod +x patronupdater.py
+
+# Unknown jank. No idea why it was in the old master container
+RUN pip3 install iso8601 lockfile cachecontrol
+
