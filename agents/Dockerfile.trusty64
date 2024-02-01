@@ -1,23 +1,13 @@
 # MultiMC 64-bit Linux Build Environment
 
-# Add teamcity parts to an ancient base of Ubuntu 14.04
 FROM ubuntu:trusty
 MAINTAINER Petr Mrázek, peterix@gmail.com
 
-VOLUME /data/teamcity_agent/conf
 ENV LANG en_US.UTF-8
-ENV CONFIG_FILE /data/teamcity_agent/conf/buildAgent.properties
-
-COPY run-agent.sh /run-agent.sh
-COPY run-services.sh /run-services.sh
-COPY buildagent /opt/buildagent
+ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update
 RUN apt-get install -y --no-install-recommends sudo
-RUN useradd -m buildagent
-RUN chmod +x /opt/buildagent/bin/*.sh
-RUN chmod +x /run-agent.sh /run-services.sh
-RUN mv /opt/buildagent/conf /opt/buildagent/conf_dist && sync
 
 # We need "apt-add-repository"
 RUN apt-get install -y software-properties-common python-software-properties curl
@@ -45,10 +35,6 @@ RUN apt-get install -y openjdk-8-jdk
 
 # Install extra packages
 RUN apt-get install -y mesa-common-dev libglu1-mesa-dev libgtk2.0-dev vim
-
-CMD ["/run-services.sh"]
-
-EXPOSE 9090
 
 # Oh god, have mercy
 RUN mkdir -p ~/.ssh/

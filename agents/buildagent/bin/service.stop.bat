@@ -1,1 +1,0 @@
-..\launcher\bin\TeamCityAgentService-windows-x86-32.exe -p ../conf/wrapper.conf
