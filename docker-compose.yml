@@ -5,53 +5,49 @@ services:
       context: agents
       dockerfile: Dockerfile.trusty64
     environment:
-     - "SERVER_URL=http://server:8111"
+     - "SERVER_URL=http://host.docker.internal:8111"
      - AGENT_NAME=Trusty64
      - AGENT_TOKEN=${TOKEN_TRUSTY64}
      - RUN_AS_BUILDAGENT=true
     hostname: trusty-64
-    networks:
-     - teamcity_internal
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
   agent-x32:
     build:
       context: agents
       dockerfile: Dockerfile.trusty32
     environment:
-     - "SERVER_URL=http://server:8111"
+     - "SERVER_URL=http://host.docker.internal:8111"
      - AGENT_NAME=Trusty32
      - AGENT_TOKEN=${TOKEN_TRUSTY32}
      - RUN_AS_BUILDAGENT=true
     hostname: trusty-32
-    networks:
-     - teamcity_internal
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
   site:
     build:
       context: agents
       dockerfile: Dockerfile.site
     environment:
-     - "SERVER_URL=http://server:8111"
+     - "SERVER_URL=http://host.docker.internal:8111"
      - AGENT_NAME=Site
      - AGENT_TOKEN=${TOKEN_SITE}
      - RUN_AS_BUILDAGENT=true
     hostname: site
-    networks:
-     - teamcity_internal
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
   deployer:
     build:
       context: agents
       dockerfile: Dockerfile.deployer
     environment:
-     - "SERVER_URL=http://server:8111"
+     - "SERVER_URL=http://host.docker.internal:8111"
      - AGENT_NAME=Deployer
      - AGENT_TOKEN=${TOKEN_DEPLOYER}
     hostname: deployer
-    networks:
-      - teamcity_internal
     volumes:
       - /etc/private/deployer:/private
-      - /var/www/files:/deploy/files
-      - /var/www/files2:/deploy/files2
-networks:
-  teamcity_internal:
-    external: true
+      - /home/http/files:/deploy/files
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 

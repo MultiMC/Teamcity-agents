@@ -41,3 +41,7 @@ RUN chmod +x patronupdater.py
 # Unknown jank. No idea why it was in the old master container
 RUN pip3 install iso8601 lockfile cachecontrol
 
+# Oh god, have mercy
+RUN mkdir -p ~/.ssh/
+RUN ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
+
